@@ -2,13 +2,13 @@ import Cliente from "../../../model/cliente/Cliente";
 
 export default interface ClienteUseCasePort{
 
-    verificarTipoClientePremium: (cliente:Cliente)=>boolean;
-    verificarEdadPremiun: (edad:number)=>boolean;
+    verificarTipoClientePremium: (cliente:Cliente)=> Promise<boolean>;
+    verificarEdadPremiun: (edad:number)=> Promise<boolean>;
 
-    agregarCliente:(cliente:Cliente)=>boolean;
-    modificarInformacionCliente:(cliente:Cliente)=>boolean;
+    agregarCliente:(cliente:Cliente)=> Promise<boolean>;
+    modificarInformacionCliente:(cliente:Cliente)=> Promise<boolean>;
 
-    obtenerClientePorCita:(numerCita:string)=>Cliente;
+    obtenerClientePorCita:(numerCita:string)=> Promise<Cliente>;
 
 
 }

@@ -2,7 +2,7 @@ import Cita from "../../../model/cita/Cita";
 
 export default interface AdminUseCasePort{
     
-    listaCitasConAsistencia:() => Cita[];
-    listaCitasSinAsistencia:() => Cita[];
+    listaCitasConAsistencia:() => Promise<Cita[]>;
+    listaCitasSinAsistencia:() => Promise<Cita[]>;
 
 }

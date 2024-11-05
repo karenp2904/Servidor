@@ -8,6 +8,8 @@ export default interface CitaServicePort{
     buscarCita: (numeroCita: string)=> Promise<Cita>;
     buscarCitasPorCliente:(idCliente:string)=>Promise<Cita[]>;
 
+    listaCitas:()=>Promise<Cita[]>;
+
 
 
 }

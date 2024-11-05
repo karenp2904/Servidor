@@ -1,12 +1,19 @@
 import { Request, Response } from 'express'
 
 import CitaControllerExpressPort from '../../../dominio/port/driver/expressDriver/controllerExpress/CitaControllerExpressPort'
-import CitaUseCase from '../../../aplicacion/useCase/CitaUseCase'
+import CitaUseCasePort from '../../../dominio/port/driver/useCaseDriver/CitaUseCasePort'
+import AgenteUseCasePort from '../../../dominio/port/driver/useCaseDriver/AgenteUseCasePort'
+import AdminUseCasePort from '../../../dominio/port/driver/useCaseDriver/AdminUseCasePort'
 
 export default class CitaControllerExpress implements CitaControllerExpressPort {
 
     
-    constructor(private readonly citaUseCase: CitaUseCase){}
+    constructor(
+        private readonly citaUseCase: CitaUseCasePort,
+        private readonly agenteUseCase: AgenteUseCasePort,
+        private readonly adminUseCase: AdminUseCasePort,
+
+    ){}
 
     public obtenerCita(req: Request, res: Response): void {
         const citaa= req.body
@@ -30,6 +37,23 @@ export default class CitaControllerExpress implements CitaControllerExpressPort 
     public modificarCita(req: Request, res: Response): void {
         const citaModificar= req.body
         const respuesta= this.citaUseCase.modificarCita(citaModificar)
+        res.status(200).json({ message: 'modificarCita', data: respuesta })
+    }
+
+    public completarCita(req: Request, res: Response): void {
+        const citaModificar= req.body
+        const respuesta= this.agenteUseCase.completarCita(citaModificar)
+        res.status(200).json({ message: 'modificarCita', data: respuesta })
+    }
+
+
+    public citasAsistencia(_req: Request, res: Response): void {
+        const respuesta= this.adminUseCase.listaCitasConAsistencia()
+        res.status(200).json({ message: 'modificarCita', data: respuesta })
+    }
+
+    public citasNoAsistencia(_req: Request, res: Response): void {
+        const respuesta= this.adminUseCase.listaCitasSinAsistencia()
         res.status(200).json({ message: 'modificarCita', data: respuesta })
     }
 

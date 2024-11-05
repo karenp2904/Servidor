@@ -43,5 +43,26 @@ export default class CitaRouterExpress extends RouterExpress implements CitaRout
             )
     }
 
+    public completarCita(): void { //completar campos
+        this.router.get(
+            '/sistema/citas/completar',
+            this.citaController.completarCita.bind(this.citaController)
+            )
+    }
+
+    public citasAsistencia(): void { 
+        this.router.get(
+            '/sistema/admin/citasNoAsistencia',
+            this.citaController.completarCita.bind(this.citaController)
+            )
+    }
+
+    public citasNoAsistencia(): void {
+        this.router.get(
+            '/sistema/admin/citasAsistencia',
+            this.citaController.completarCita.bind(this.citaController)
+            )
+    }
+
     
 }

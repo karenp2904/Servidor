@@ -1,10 +1,10 @@
 import { Request, Response } from 'express'
-import ClienteUseCase from '../../../aplicacion/useCase/ClienteUseCase';
 import ClienteControllerExpressPort from '../../../dominio/port/driver/expressDriver/controllerExpress/ClienteControllerExpressPort';
+import ClienteUseCasePort from '../../../dominio/port/driver/useCaseDriver/ClienteUseCasePort';
 
 export default class ClienteControllerExpress implements ClienteControllerExpressPort {
 
-    constructor(private readonly clienteUseCase: ClienteUseCase){}
+    constructor(private readonly clienteUseCase: ClienteUseCasePort){}
 
     public obtenerCliente(req: Request, res: Response): void {
         try {

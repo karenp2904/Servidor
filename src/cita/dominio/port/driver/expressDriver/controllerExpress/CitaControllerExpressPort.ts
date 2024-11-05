@@ -5,4 +5,9 @@ export default interface CitaControllerExpressPort{
     cancelarCita(req: Request, res: Response):void
     modificarCita(req: Request, res: Response):void
     obtenerCita(req: Request, res: Response):void
+    completarCita(req: Request, res: Response):void
+
+    citasAsistencia(req: Request, res: Response):void
+    citasNoAsistencia(req: Request, res: Response):void
+
 }

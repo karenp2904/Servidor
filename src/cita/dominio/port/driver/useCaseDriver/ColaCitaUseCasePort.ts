@@ -4,12 +4,10 @@ import Turno from "../../../model/turno/Turno";
 
 export default interface ColaCitaUseCasePort{
 
-    listaTurnos:  ()=> Turno[];
-    modificarCola: (lista:Cita[])=> boolean;
-    agregarTurno: (cita:Cita)=>boolean;
-    verificarPrioridad: (cliente:Cliente)=>boolean; //true si es premium
-    obtenerTurno:(numeroCita:string)=>Turno;
-    eliminarTurno:(cita:Cita)=>boolean; // cuando la cita finaliza
+    listaTurnos:  ()=>Promise<Turno[]>;
+    agregarTurno: (cita:Cita)=> Promise<Turno>;
+    verificarPrioridad: (cliente:Cliente)=> Promise<boolean>; //true si es premium
+    obtenerTurno:(numeroCita:string)=> Promise<Turno>;
 
 
 

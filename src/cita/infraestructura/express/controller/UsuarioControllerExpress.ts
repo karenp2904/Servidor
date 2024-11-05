@@ -1,11 +1,11 @@
 import { Request, Response } from 'express'
 import UsuarioControllerExpressPort from '../../../dominio/port/driver/expressDriver/controllerExpress/UsuarioControllerExpressPort';
-import UsuarioUseCase from '../../../aplicacion/useCase/UsuarioUseCase';
+import UsuarioUseCasePort from '../../../dominio/port/driver/useCaseDriver/UsuarioUseCasePort';
 
 
 export default class UsuarioControllerExpress implements UsuarioControllerExpressPort {
 
-    constructor(private readonly userUseCase: UsuarioUseCase ){}
+    constructor(private readonly userUseCase: UsuarioUseCasePort ){}
 
 
     public validarCredenciales(req: Request, res: Response): void {

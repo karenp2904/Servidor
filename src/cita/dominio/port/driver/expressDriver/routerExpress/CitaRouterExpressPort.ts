@@ -6,5 +6,10 @@ export default interface CitaRouterExpressPort extends RouterExpress{
     modificarCita():void
     cancelarCita():void
     obtenerCita():void
+    completarCita():void
+
+    citasAsistencia():void
+    citasNoAsistencia():void
+
 
 }

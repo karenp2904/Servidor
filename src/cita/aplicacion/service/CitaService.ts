@@ -5,6 +5,10 @@ import CitaServicePort from "../../dominio/port/driver/serviceDriver/CitaService
 
 export default class CitaService implements CitaServicePort {
     
+
+    constructor(private readonly : port) {}
+
+
     public async agendarCita(cita: Cita): Promise<boolean> {
         try {
 

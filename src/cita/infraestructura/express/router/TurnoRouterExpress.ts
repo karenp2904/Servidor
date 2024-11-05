@@ -37,6 +37,13 @@ export default class TurnoRouterExpress extends RouterExpress implements TurnoRo
             )    
     }
 
+    finalizarTurno(): void {
+        this.router.get(
+            '/sistema/turno/finalizar',
+            this.turnoController.finalizarTurno.bind(this.turnoController)
+            )    
+    }
+
     
     
 }

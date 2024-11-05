@@ -1,6 +1,6 @@
 
 export default interface UsuarioUseCasePort{
     
-    validarCredenciales:(usuario:string, contraseña:string) => boolean;
+    validarCredenciales:(usuario:string, contraseña:string) => Promise<boolean>;
 
 }
