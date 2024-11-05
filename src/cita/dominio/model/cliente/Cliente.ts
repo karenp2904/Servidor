@@ -63,8 +63,8 @@ export default class Cliente {
             this.direccion = value;
         }
     
-        public getTipoCliente(): string | void {
-            return this.tipoCliente;
+        public getTipoCliente(): string {
+            return this.tipoCliente || '';
         }
         public setTipoCliente(value: string): void {
             this.tipoCliente = value;

@@ -10,8 +10,8 @@ export default class DatabaseControllerCita {
 
     public agendarCita = async (atributosCita: CitaDatabaseAtributtes): Promise<boolean> => {
         try {
-            const query = `INSERT INTO cita (numeroCita, fecha, hora, lugar, descripcion, asistencia, tipoCita, anotaciones, cliente, turno)
-                            VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)`;
+            const query = `INSERT INTO cita (numeroCita, fecha, hora, lugar, descripcion, asistencia, tipoCita, anotaciones, cliente)
+                            VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)`;
             const values = [
                 atributosCita.numeroCita,
                 atributosCita.fecha,
@@ -21,8 +21,7 @@ export default class DatabaseControllerCita {
                 atributosCita.asistencia,
                 atributosCita.tipoCita,
                 atributosCita.anotaciones,
-                atributosCita.clienteId,
-                atributosCita.turnoId
+                atributosCita.idCliente
             ];
 
             await this.dbController.query(query, values);
@@ -36,8 +35,8 @@ export default class DatabaseControllerCita {
     public modificarCita = async (atributosCita: CitaDatabaseAtributtes): Promise<boolean> => {
         try {
             const query = `UPDATE cita SET fecha = $1, hora = $2, lugar = $3, descripcion = $4,
-                            asistencia = $5, tipoCita = $6, anotaciones = $7, cliente = $8, turno = $9
-                            WHERE numeroCita = $10`;
+                            asistencia = $5, tipoCita = $6, anotaciones = $7, cliente = $8
+                            WHERE numeroCita = $9`;
             const values = [
                 atributosCita.fecha,
                 atributosCita.hora,
@@ -46,8 +45,7 @@ export default class DatabaseControllerCita {
                 atributosCita.asistencia,
                 atributosCita.tipoCita,
                 atributosCita.anotaciones,
-                atributosCita.clienteId,
-                atributosCita.turnoId,
+                atributosCita.idCliente,
                 atributosCita.numeroCita
             ];
 
@@ -70,7 +68,7 @@ export default class DatabaseControllerCita {
         }
     };
 
-    public buscarCita = async (numeroCita: string): Promise<CitaDatabaseAtributtes> => {
+    public buscarCita = async (numeroCita: string): Promise<CitaDatabaseAtributtes | null> => {
         try {
             const query = `SELECT * FROM cita WHERE numeroCita = $1`;
             const results = await this.dbController.query<CitaDatabaseAtributtes>(query, [numeroCita]);
@@ -82,7 +80,7 @@ export default class DatabaseControllerCita {
             return results[0]!;
         } catch (error) {
             console.error("Error al buscar la cita:", error);
-            throw error;
+            throw null;
         }
     };
     
@@ -98,4 +96,17 @@ export default class DatabaseControllerCita {
             return []; // O lanza una excepción si prefieres manejarlo de otra forma
         }
     };
+    
+    public obtenerTodasLasCitas = async (): Promise<CitaDatabaseAtributtes[]> => {
+        try {
+            const query = `SELECT * FROM cita`;
+            const results = await this.dbController.query<CitaDatabaseAtributtes>(query, []);
+            return results;
+        } catch (error) {
+            console.error("Error al obtener todas las citas:", error);
+            return []
+        }
+    };
+
+
 }

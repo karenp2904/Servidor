@@ -4,7 +4,7 @@ import TurnoRouterExpressPort from "../../dominio/port/driver/expressDriver/rout
 export default class FactoryCitaRouter {
     public static readonly create = (): TurnoRouterExpressPort  => {
         const citaService= new ()
-        const citaUseCase= new ColaCitasUseCase()
+        const citaUseCase= new ColaCitasUseCase(citaService,)
         const citaController= new CitaControllerExpress(citaUseCase)
         return new CitaRouterExpress(citaController)
     }

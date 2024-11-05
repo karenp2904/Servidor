@@ -3,12 +3,12 @@ import Cliente from "../../dominio/model/cliente/Cliente"
 import NullTurno from "../../dominio/model/turno/NullTurno"
 import Turno, { TurnoInterfaceAtributtes } from "../../dominio/model/turno/Turno"
 import ColaCitaServicePort from "../../dominio/port/driver/serviceDriver/ColaCitaServicePort"
-import AgenteUseCasePort from "../../dominio/port/driver/useCaseDriver/AgenteUseCasePort"
 import CitaUseCasePort from "../../dominio/port/driver/useCaseDriver/CitaUseCasePort"
 import ClienteUseCasePort from "../../dominio/port/driver/useCaseDriver/ClienteUseCasePort"
 import ColaCitaUseCasePort from "../../dominio/port/driver/useCaseDriver/ColaCitaUseCasePort"
 
 export default class ColaCitasUseCase implements ColaCitaUseCasePort{
+
 
     constructor(
         private readonly colaCitaService: ColaCitaServicePort,
@@ -29,6 +29,11 @@ export default class ColaCitasUseCase implements ColaCitaUseCasePort{
 
     public modificarCola = async (lista: Turno[]): Promise<boolean> => {
         try {
+                // Reasignar los puestos según el nuevo orden en la lista
+                lista.forEach((turno, index) => {
+                turno.setPuesto(index + 1) // Asigna la posición empezando desde 1
+            });
+
             const resultado = await this.colaCitaService.modificarCola(lista);
             return resultado;
         } catch (error) {
@@ -43,31 +48,48 @@ export default class ColaCitasUseCase implements ColaCitaUseCasePort{
             const cliente = await this.clienteUseCase.obtenerClientePorCita(cita.getNumeroCita());
             const esClientePremium = await this.verificarPrioridad(cliente);
 
+            const listaTurnos = await this.listaTurnos();
 
-            const listaTurnos= await this.listaTurnos();
+            // Crear el nuevo turno
+            const turno: TurnoInterfaceAtributtes = {
+                idTurno: listaTurnos.length + 1,
+                turno: `${await this.generarTurno(esClientePremium)}`,
+                puesto: 0, // Se asignará después de ordenar
+                idCita: cita.getNumeroCita()
+            };
 
-            const turno: TurnoInterfaceAtributtes ={
-                idTurno: listaTurnos.length+1,
-                turno: `T-${this.generarPuesto()}` , 
-                puesto: this.generarPuesto(),
-                idCita: cita.getNumeroCita() 
-            }
-            // Crea el nuevo turno basado en la cita
             const nuevoTurno = new Turno(turno);
 
-            // Si el cliente es premium, agrega el turno al inicio de la cola
+            // Insertar en la posición adecuada según prioridad
             if (esClientePremium) {
-                listaTurnos.unshift(nuevoTurno);
+                // Insertar al inicio de los turnos premium
+                const indiceNoPremium = listaTurnos.findIndex(t => t.getTurno().startsWith('P'));
+                if (indiceNoPremium !== -1) {
+                    listaTurnos.splice(indiceNoPremium, 0, nuevoTurno); // Insertar antes del primer no-premium
+                } else {
+                    listaTurnos.push(nuevoTurno); // Si todos son premium, agregar al final
+                }
             } else {
+                // Agregar al final de la cola
                 listaTurnos.push(nuevoTurno);
             }
 
-            return nuevoTurno
+            console.log(listaTurnos)
+
+            // Reasignar puestos después de la inserción
+            listaTurnos.forEach((t, index) => t.setPuesto(index + 1));
+
+            // Guardar la lista modificada
+            await this.modificarCola(listaTurnos);
+
+            return nuevoTurno;
         } catch (error) {
             console.error('Error en agregarTurno:', error);
             return new NullTurno();
         }
     };
+
+
 
     public verificarPrioridad = async (cliente: Cliente): Promise<boolean> => {
         try {
@@ -86,17 +108,35 @@ export default class ColaCitasUseCase implements ColaCitaUseCasePort{
             if (!cita) return new NullTurno();
 
             const turno = await this.agregarTurno(cita)
-            return turno || new NullTurno();
+            return turno;
         } catch (error) {
             console.error('Error en obtenerTurno:', error);
             return new NullTurno();
         }
     };
 
-    public generarPuesto(): number{
-        return 1
-    }
-
+    public generarTurno = async (esClientePremium: boolean): Promise<string> => {
+        const listaTurnos = await this.listaTurnos();
+    
+        // Separar los turnos premium y no premium
+        const turnosPremium = listaTurnos.filter(turno => turno.getTurno().startsWith('P'));
+        const turnosNoPremium = listaTurnos.filter(turno => turno.getTurno().startsWith('G'));
+    
+        let nuevoTurno: string;
+    
+        if (esClientePremium) {
+            // Para clientes premium, el turno tendrá el prefijo 'P' seguido de un número incrementado
+            const siguienteNumero = turnosPremium.length + 1;
+            nuevoTurno = `P-${siguienteNumero}`;
+        } else {
+            // Para clientes normales, el turno tendrá el prefijo 'G' seguido de un número incrementado
+            const siguienteNumero = turnosNoPremium.length + 1;
+            nuevoTurno = `G-${siguienteNumero}`;
+        }
+    
+        return nuevoTurno;
+    };
+    
 
 
     public eliminarTurno = async (numeroCita: string): Promise<boolean> => {

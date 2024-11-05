@@ -7,6 +7,5 @@ export default interface CitaDatabaseAtributtes{
     asistencia: string,
     tipoCita: string,
     anotaciones: string,
-    clienteId: string,
-    turnoId: number
+    idCliente: string,
 }

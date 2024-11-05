@@ -3,13 +3,19 @@ import NullCita from "../../dominio/model/cita/NullCita";
 import Cliente from "../../dominio/model/cliente/Cliente";
 import CitaServicePort from "../../dominio/port/driver/serviceDriver/CitaServicePort";
 import CitaUseCasePort from "../../dominio/port/driver/useCaseDriver/CitaUseCasePort";
+import ClienteUseCasePort from "../../dominio/port/driver/useCaseDriver/ClienteUseCasePort";
 
 export default class CitaUseCase implements CitaUseCasePort {
 
-    constructor(private readonly citaService: CitaServicePort) {}
+    constructor(
+        private readonly citaService: CitaServicePort,
+        private readonly clienteUseCase: ClienteUseCasePort
+    ) {}
 
     public agendarCita = async (cita: Cita): Promise<boolean> => {
         try {
+            const agregarCliente= await this.clienteUseCase.agregarCliente(cita.getCliente())
+            console.log(agregarCliente)
             const respuesta = await this.citaService.agendarCita(cita);
             console.log('agendarCitaUse:', respuesta);
             return respuesta;

@@ -15,7 +15,7 @@ export default class DatabaseControllerCitas {
             return results;
         } catch (error) {
             console.error("Error al obtener todas las citas:", error);
-            throw error;
+            return []
         }
     };
 

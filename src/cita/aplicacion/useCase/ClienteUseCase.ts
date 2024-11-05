@@ -5,7 +5,9 @@ import ClienteUseCasePort from "../../dominio/port/driver/useCaseDriver/ClienteU
 
 export default class ClienteUseCase implements ClienteUseCasePort{
 
-    constructor(private readonly clienteService: ClienteServicePort) {}
+    constructor(
+        private readonly clienteService: ClienteServicePort
+    ) {}
 
     public obtenerClientePorCita = async (numeroCita: string): Promise<Cliente> => {
         try {
@@ -23,6 +25,7 @@ export default class ClienteUseCase implements ClienteUseCasePort{
             if(await this.verificarEdadPremiun){
                 return true
             }
+
             return cliente.getTipoCliente() === 'premium';
         } catch (error) {
             console.error('Error en verificarTipoClientePremium:', error);
@@ -41,6 +44,14 @@ export default class ClienteUseCase implements ClienteUseCasePort{
 
     public agregarCliente = async (cliente: Cliente): Promise<boolean> => {
         try {
+            if(cliente){
+                if(await this.verificarTipoClientePremium){
+                    cliente.setTipoCliente('premium')
+                }else{
+                    cliente.setTipoCliente('normal')
+                }
+            }
+            console.log(cliente)
             const resultado = await this.clienteService.agregarCliente(cliente);
             return resultado;
         } catch (error) {

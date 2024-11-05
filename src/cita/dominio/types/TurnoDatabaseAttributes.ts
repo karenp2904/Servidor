@@ -1,5 +1,6 @@
 export default interface TurnoDatabaseAtributtes{
     idTurno:number,
     turno:string,
-    modulo:string,
+    puesto:number,
+    idCita:string,
 }
