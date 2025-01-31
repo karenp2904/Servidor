@@ -21,9 +21,9 @@ export default class RepositoryTurno implements TurnoRepositoryPort {
     };
 
     // Find turno by ID
-    findById = async (id: number): Promise<TurnoDatabaseAtributtes> => {
+    findById = async (id: string): Promise<TurnoDatabaseAtributtes> => {
         try {
-            const turno = await this.dbController.obtenerTurnoPorId(id);
+            const turno = await this.dbController.obtenerTurnoPorId(parseInt(id));
             if (turno) {
                 return turno;
             } else {
@@ -48,7 +48,7 @@ export default class RepositoryTurno implements TurnoRepositoryPort {
     };
 
     // Update a turno by ID
-    update = async (id: number, item: Partial<TurnoDatabaseAtributtes>): Promise<boolean> => {
+    update = async (id: string, item: Partial<TurnoDatabaseAtributtes>): Promise<boolean> => {
         try {
             const existingTurno = await this.findById(id);
             if (!existingTurno) {
@@ -56,7 +56,7 @@ export default class RepositoryTurno implements TurnoRepositoryPort {
             }
 
             const updatedTurno = { ...existingTurno, ...item };
-            await this.dbController.modificarPuestoTurno(updatedTurno.idTurno, updatedTurno.puesto!);
+            await this.dbController.modificarPuestoTurno(updatedTurno.idturno, updatedTurno.puesto!);
             return true;
         } catch (error) {
             console.error("Error al actualizar el turno:", error);
@@ -70,8 +70,8 @@ export default class RepositoryTurno implements TurnoRepositoryPort {
 
         try {
             for (const item of items) {
-                if (item.idTurno) {
-                    const updated = await this.update(item.idTurno, item);
+                if (item.idturno) {
+                    const updated = await this.update(item.idturno.toString(), item);
                     results.push(updated);
                 } else {
                     console.warn("No se encontró idTurno en el item:", item);
@@ -85,9 +85,19 @@ export default class RepositoryTurno implements TurnoRepositoryPort {
         }
     };
 
-    delete = async (id: number): Promise<boolean> => {
+    delete = async (id: string): Promise<boolean> => {
         try {
-            await this.dbController.eliminarTurno(id);
+            await this.dbController.eliminarTurno(parseInt(id));
+            return true;
+        } catch (error) {
+            console.error("Error al eliminar el turno:", error);
+            return false;
+        }
+    };
+
+    deleteByIdCita = async (id: string): Promise<boolean> => {
+        try {
+            await this.dbController.eliminarTurnoConNumCita(id);
             return true;
         } catch (error) {
             console.error("Error al eliminar el turno:", error);
@@ -97,10 +107,10 @@ export default class RepositoryTurno implements TurnoRepositoryPort {
 
     private returnNullInterface(): TurnoDatabaseAtributtes {
         return {
-            idTurno: 0,
+            idturno: 0,
             turno: '',
             puesto: 0,
-            idCita: '',
+            idcita: '',
         } as TurnoDatabaseAtributtes;
     }
 }

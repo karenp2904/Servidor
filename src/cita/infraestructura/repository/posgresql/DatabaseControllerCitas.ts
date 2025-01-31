@@ -12,7 +12,7 @@ export default class DatabaseControllerCitas {
         try {
             const query = `SELECT * FROM cita`;
             const results = await this.dbController.query<CitaDatabaseAtributtes>(query, []);
-            return results;
+            return results.rows;
         } catch (error) {
             console.error("Error al obtener todas las citas:", error);
             return []

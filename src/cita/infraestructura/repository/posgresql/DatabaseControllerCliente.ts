@@ -9,9 +9,10 @@ export default class DatabaseControllerClientes {
         this.dbController = dbController;
     }
 
-    // Agregar un nuevo cliente
     public async agregarCliente(atributosCliente: ClienteDatabaseAttributes): Promise<boolean> {
         try {
+    
+            // Si el cliente no existe, lo agregamos
             const query = `INSERT INTO cliente (id, nombre, apellido, edad, direccion, tipoCliente)
                             VALUES ($1, $2, $3, $4, $5, $6)`;
             const values = [
@@ -19,12 +20,17 @@ export default class DatabaseControllerClientes {
                 atributosCliente.edad, atributosCliente.direccion, atributosCliente.tipoCliente
             ];
             await this.dbController.query(query, values);
+    
+            console.log("Cliente agregado exitosamente.");
             return true;
         } catch (error) {
             console.error("Error al agregar el cliente:", error);
             return false;
         }
     }
+    
+    
+    
 
     // Modificar un cliente existente
     public async modificarCliente(atributosCliente: ClienteDatabaseAttributes): Promise<boolean> {
@@ -60,11 +66,11 @@ export default class DatabaseControllerClientes {
         try {
             const query = `SELECT * FROM cliente WHERE id = $1`;
             const results = await this.dbController.query<ClienteDatabaseAttributes>(query, [id]);
-            if (results.length === 0) {
+            if (results.rows.length == 0) {
                 console.log(`No se encontró el cliente con el número ${id}`);
             }
     
-            return results[0]!;
+            return results.rows[0]!;
         } catch (error) {
             console.error("Error al buscar el cliente:", error);
             return null
@@ -76,7 +82,7 @@ export default class DatabaseControllerClientes {
         try {
             const query = `SELECT * FROM cliente`;
             const results = await this.dbController.query<ClienteDatabaseAttributes>(query, []);
-            return results;
+            return results.rows;
         } catch (error) {
             console.error("Error al obtener todos los clientes:", error);
             return []
@@ -85,15 +91,15 @@ export default class DatabaseControllerClientes {
 
     public async obtenerClientePorCita(numeroCita: string): Promise<ClienteDatabaseAtributtes | null> {
         try {
-            const query = `SELECT * FROM cliente WHERE idCliente = (SELECT cliente FROM cita WHERE numeroCita = $1)`;
+            const query = `SELECT * FROM cliente WHERE id = (SELECT idcliente FROM cita WHERE numerocita = $1)`;
             const results = await this.dbController.query<ClienteDatabaseAtributtes>(query, [numeroCita]);
             
-            if (results.length === 0) {
+            if (results.rowCount === 0) {
                 console.log(`No se encontró el cliente para la cita con número ${numeroCita}`);
                 return null; // Retorna null si no se encuentra el cliente
             }
             
-            return results[0]  as ClienteDatabaseAtributtes;; // Retorna el primer cliente encontrado
+            return results.rows[0]  as ClienteDatabaseAtributtes;; // Retorna el primer cliente encontrado
         } catch (error) {
             console.error("Error al obtener el cliente por número de cita:", error);
             return null; // Retorna null en caso de error
@@ -106,12 +112,12 @@ export default class DatabaseControllerClientes {
             const query = `SELECT * FROM cliente WHERE idCliente = $1`;
             const results = await this.dbController.query<ClienteDatabaseAtributtes>(query, [idCliente]);
             
-            if (results.length === 0) {
+            if (results.rowCount === 0) {
                 console.log(`No se encontró el cliente con ID ${idCliente}`);
                 return null; // Retorna null si no se encuentra el cliente
             }
             
-            return results[0] as ClienteDatabaseAtributtes; // Asegúrate de que sea del tipo correcto
+            return results.rows[0] as ClienteDatabaseAtributtes; // Asegúrate de que sea del tipo correcto
         } catch (error) {
             console.error("Error al obtener el cliente por ID:", error);
             return null; // Retorna null en caso de error

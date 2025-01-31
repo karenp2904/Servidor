@@ -87,15 +87,15 @@ export default class RepositoryCita implements CitaRepositoryPort {
 
     returnNullInterface(): CitaDatabaseAtributtes {
         return {
-            numeroCita: '',        
+            numerocita: '',        
             fecha: '',
             hora: '',
             lugar: '',
             descripcion: '',
             asistencia: '',
-            tipoCita: '',
+            tipocita: '',
             anotaciones: '',
-            idCliente: '',          
+            idcliente: '',          
         } as CitaDatabaseAtributtes; 
     }
 }

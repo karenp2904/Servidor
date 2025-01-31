@@ -44,7 +44,7 @@ export default class ClienteService implements ClienteServicePort{
 
         } catch (error) {
             console.error("Error al obtener el cliente:", error);
-            throw error;
+            return new NullCliente()
         }
     };
 
@@ -81,7 +81,7 @@ export default class ClienteService implements ClienteServicePort{
             
         } catch (error) {
             console.error("Error al obtener el cliente por cita:", error);
-            throw error;
+            return new NullCliente()
         }
     };
 

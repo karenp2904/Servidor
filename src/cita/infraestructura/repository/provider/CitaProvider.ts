@@ -9,34 +9,31 @@ export default class CitaProvider {
 
     public static get = async (citaData: CitaDatabaseAtributtes): Promise<Cita | NullCita> => {
 
-
-        const { numeroCita, fecha, hora, lugar, descripcion, asistencia, tipoCita, anotaciones, idCliente } = citaData;
-
-        if (!numeroCita || !fecha || !hora || !lugar || !descripcion || !asistencia || !tipoCita || !idCliente) {
-            return new NullCita(); 
-        }
-
         try {
             
+            const { numerocita, fecha, hora, lugar, descripcion, asistencia, tipocita, anotaciones, idcliente } = citaData;
+            
 
-            const clienteInstance = await ClienteProvider.get(idCliente); 
-
+            const clienteInstance = await ClienteProvider.get(idcliente); 
+            console.log(clienteInstance)
             // Crea una nueva instancia de Cita
             return new Cita({
-                numeroCita,
+                numeroCita: numerocita,
                 fecha,
                 hora,
                 lugar,
                 descripcion,
                 asistencia,
-                tipoCita,
+                tipoCita: tipocita,
                 anotaciones,
                 cliente: clienteInstance,
             });
 
         } catch (error) {
-            console.error(`Error al obtener el cliente con ID ${idCliente}:`, error);
+            console.error(`Error al obtener el cliente con ID :`, error);
             return new NullCita(); // Retorna NullCita en caso de error
         }
     }
+
+    
 }

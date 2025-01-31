@@ -8,20 +8,26 @@ export default class AdminUseCase implements AdminUseCasePort{
 
     public listaCitasConAsistencia = async (): Promise<Cita[]> => {
         try {
-            const citas = await this.citaService.listaCitas();
+            const citasData = await this.citaService.listaCitas();
+    
             // Filtra citas con asistencia "sí"
-            return citas.filter(cita => cita.getAsistencia() === "sí");
+            const citas= citasData.filter(cita => cita.getAsistencia() === "si");
+            console.log(citas)
+            return citas
         } catch (error) {
             console.error('Error en listaCitasConAsistencia:', error);
             return [];
         }
     };
+    
+    
+    
 
     public listaCitasSinAsistencia = async (): Promise<Cita[]> => {
         try {
             const citas = await this.citaService.listaCitas();
             // Filtra citas sin asistencia "no"
-            return citas.filter(cita => cita.getAsistencia() === "no");
+            return await citas.filter(cita => cita.getAsistencia() === "no");
         } catch (error) {
             console.error('Error en listaCitasSinAsistencia:', error);
             return [];

@@ -13,26 +13,48 @@ export default class TurnoControllerExpress implements TurnoControllerExpressPor
 
     ){}
 
-    public obtenerTurnos(_req: Request, res: Response): void {
-        const respuesta= this.colaUseCase.listaTurnos()
-        res.status(200).json({ message: 'Cita', data: respuesta }) 
+    public async obtenerTurnos(_req: Request, res: Response): Promise<void> {
+        try {
+            const respuesta = await this.colaUseCase.listaTurnos();
+            res.status(200).json({ message: 'Cita', data: respuesta });
+        } catch (error) {
+            console.error("Error al obtener los turnos:", error);
+            res.status(500).json({ message: 'Error al obtener los turnos', error: error });
+        }
     }
+    
 
-    public obtenerTurno(req: Request, res: Response): void {
-        const numerCita= req.body
-        const respuesta= this.colaUseCase.obtenerTurno(numerCita)
+    public async obtenerTurno(req: Request, res: Response):  Promise<void> {
+        const {numerocita}= req.body
+        const respuesta= await this.colaUseCase.obtenerTurno(numerocita)
         res.status(200).json({ message: 'Cita', data: respuesta })
     }
 
-    public modificarCola(req: Request, res: Response): void {
-    const citas= req.body
-        const respuesta= this.agenteUseCase.modificarCola(citas)
+    public async obtenerTurnoId(req: Request, res: Response):  Promise<void> {
+        const {idTurno}= req.body
+        const respuesta= await this.colaUseCase.obtenerTurnoId(idTurno)
         res.status(200).json({ message: 'Cita', data: respuesta })
     }
 
-    public finalizarTurno(req: Request, res: Response): void {
-        const citas= req.body
-            const respuesta= this.agenteUseCase.eliminarTurno(citas)
+    public async  modificarCola(req: Request, res: Response):  Promise<void> {
+        try {
+            const { turnos } = req.body;
+            const respuesta = await this.agenteUseCase.modificarCola(turnos);
+    
+            // Responder según el resultado
+            if (respuesta) {
+                res.status(200).json({ message: 'Cita modificada exitosamente.', data: respuesta });
+            } else {
+                res.status(500).json({ message: 'Error al modificar la cola de turnos.' });
+            }
+        } catch (error) {
+            res.status(500).json({ message: 'Error interno en el servidor.', error: error });
+        }
+    }
+
+    public async finalizarTurno(req: Request, res: Response):  Promise<void> {
+            const {numerocita}= req.body
+            const respuesta= await this.agenteUseCase.eliminarTurno(numerocita)
             res.status(200).json({ message: 'Cita', data: respuesta })
     }
     

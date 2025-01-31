@@ -2,6 +2,7 @@ import Cliente from "../../dominio/model/cliente/Cliente";
 import NullCliente from "../../dominio/model/cliente/NullCliente";
 import ClienteServicePort from "../../dominio/port/driver/serviceDriver/ClienteServicePort";
 import ClienteUseCasePort from "../../dominio/port/driver/useCaseDriver/ClienteUseCasePort";
+import ChangeProvider from "../../infraestructura/repository/provider/ChangeType";
 
 export default class ClienteUseCase implements ClienteUseCasePort{
 
@@ -22,11 +23,14 @@ export default class ClienteUseCase implements ClienteUseCasePort{
     public verificarTipoClientePremium = async (cliente: Cliente): Promise<boolean> => {
         try {
 
-            if(await this.verificarEdadPremiun){
+            if(await this.verificarEdadPremiun(cliente.getEdad())){
                 return true
+            }else{
+                return cliente.getTipoCliente() === 'premium';
             }
 
-            return cliente.getTipoCliente() === 'premium';
+            console.log(await this.verificarEdadPremiun(cliente.getEdad()) + 'prioridad')
+
         } catch (error) {
             console.error('Error en verificarTipoClientePremium:', error);
             return false;
@@ -44,15 +48,15 @@ export default class ClienteUseCase implements ClienteUseCasePort{
 
     public agregarCliente = async (cliente: Cliente): Promise<boolean> => {
         try {
-            if(cliente){
-                if(await this.verificarTipoClientePremium){
-                    cliente.setTipoCliente('premium')
+            const clienteType= ChangeProvider.getInterfaceCliente(cliente)
+            if(clienteType){
+                if(await this.verificarTipoClientePremium(clienteType)){
+                    clienteType.setTipoCliente('premium')
                 }else{
-                    cliente.setTipoCliente('normal')
+                    clienteType.setTipoCliente('normal')
                 }
             }
-            console.log(cliente)
-            const resultado = await this.clienteService.agregarCliente(cliente);
+            const resultado = await this.clienteService.agregarCliente(clienteType);
             return resultado;
         } catch (error) {
             console.error('Error en agregarCliente:', error);
@@ -62,7 +66,9 @@ export default class ClienteUseCase implements ClienteUseCasePort{
 
     public modificarInformacionCliente = async (cliente: Cliente): Promise<boolean> => {
         try {
-            const resultado = await this.clienteService.modificarInformacionCliente(cliente);
+            const clienteType= ChangeProvider.getInterfaceCliente(cliente)
+
+            const resultado = await this.clienteService.modificarInformacionCliente(clienteType);
             return resultado;
         } catch (error) {
             console.error('Error en modificarInformacionCliente:', error);

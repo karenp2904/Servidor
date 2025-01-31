@@ -3,6 +3,7 @@ import Turno from "../../dominio/model/turno/Turno";
 import CitaServicePort from "../../dominio/port/driver/serviceDriver/CitaServicePort";
 import ColaCitaServicePort from "../../dominio/port/driver/serviceDriver/ColaCitaServicePort";
 import AgenteUseCasePort from "../../dominio/port/driver/useCaseDriver/AgenteUseCasePort";
+import ChangeProvider from "../../infraestructura/repository/provider/ChangeType";
 
 export default class AgenteUseCase implements AgenteUseCasePort{
 
@@ -12,17 +13,24 @@ export default class AgenteUseCase implements AgenteUseCasePort{
     ) {}
 
     public obtenerCola = async (): Promise<Turno[]> => {
-        return await this.colaCitaService.listaCitas(); // Obtener la lista de turnos actual desde el servicio
+        return await this.colaCitaService.listaTurnos(); // Obtener la lista de turnos actual desde el servicio
     };
 
     public modificarCola = async (lista: Turno[]): Promise<boolean> => {
         try {
+
+            const nuevaLista= lista.map(item => ChangeProvider.getInterfaceTurno(item));
+    
+            console.log('Lista de turnos actualizada Agente:', nuevaLista);
+            
             // Reasignar los puestos según el nuevo orden en la lista
-            lista.forEach((turno, index) => {
+            nuevaLista.forEach((turno, index) => {
                 turno.setPuesto(index + 1) // Asigna la posición empezando desde 1
             });
 
-            const resultado = await this.colaCitaService.modificarCola(lista);
+            console.log('listamodificada' + nuevaLista)
+
+            const resultado = await this.colaCitaService.modificarCola(nuevaLista);
             return resultado; // Retorna el resultado del servicio
         } catch (error) {
             console.error('Error en modificarCola:', error);
@@ -32,7 +40,9 @@ export default class AgenteUseCase implements AgenteUseCasePort{
 
     public completarCita = async (cita: Cita): Promise<boolean> => {
         try {
-            const resultado = await this.citaService.modificarCita(cita)
+            const citaType= ChangeProvider.getInterfaceCita(cita)
+
+            const resultado = await this.citaService.modificarCita(citaType)
             return resultado; // Retorna el resultado del servicio
         } catch (error) {
             console.error('Error en completar:', error);

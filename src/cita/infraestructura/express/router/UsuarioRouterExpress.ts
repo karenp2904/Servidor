@@ -17,7 +17,7 @@ export default class UsuarioRouterExpress extends RouterExpress implements Usuar
 
 
     public validarCredenciales(): void {
-        this.router.get(
+        this.router.post(
             '/sistema/usuario/login',
             this.usuarioController.validarCredenciales.bind(this.usuarioController)
             )

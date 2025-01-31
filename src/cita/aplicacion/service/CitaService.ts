@@ -3,6 +3,7 @@ import NullCita from "../../dominio/model/cita/NullCita";
 import CitaRepositoryPort from "../../dominio/port/driven/CitaRepositoryPort";
 import CitaServicePort from "../../dominio/port/driver/serviceDriver/CitaServicePort";
 import CitaDatabaseAtributtes from "../../dominio/types/CitaDatabaseAttributes";
+import ChangeProvider from "../../infraestructura/repository/provider/ChangeType";
 import CitaProvider from "../../infraestructura/repository/provider/CitaProvider";
 
 export default class CitaService implements CitaServicePort {
@@ -13,17 +14,18 @@ export default class CitaService implements CitaServicePort {
 
     public async agendarCita(cita: Cita): Promise<boolean> {
         try {
-            const clienteCita= cita.getCliente()
+            const clienteCita=ChangeProvider.getInterfaceCliente(cita.getCliente())
+            console.log()
             const citaDb: CitaDatabaseAtributtes={
-                numeroCita: cita.getNumeroCita(),        
+                numerocita: cita.getNumeroCita(),        
                 fecha:  cita.getFecha(),
                 hora:  cita.getHora(),  
                 lugar:  cita.getLugar(),  
                 descripcion:  cita.getDescripcion(),  
                 asistencia:  cita.getAsistencia(),  
-                tipoCita:  cita.getTipoCita(),  
+                tipocita:  cita.getTipoCita(),  
                 anotaciones:  cita.getAnotaciones(),  
-                idCliente:  clienteCita.getId(),   
+                idcliente:  clienteCita.getId(),   
             }
             const respuesta= await this.citaRepository.save(citaDb)
             if(respuesta){
@@ -39,17 +41,18 @@ export default class CitaService implements CitaServicePort {
     
     public async modificarCita(cita: Cita): Promise<boolean> {
         try {
-            const clienteCita= cita.getCliente()
+            const clienteCita=ChangeProvider.getInterfaceCliente(cita.getCliente())
+
             const citaDb: CitaDatabaseAtributtes={
-                numeroCita: cita.getNumeroCita(),        
+                numerocita: cita.getNumeroCita(),        
                 fecha:  cita.getFecha(),
                 hora:  cita.getHora(),  
                 lugar:  cita.getLugar(),  
                 descripcion:  cita.getDescripcion(),  
                 asistencia:  cita.getAsistencia(),  
-                tipoCita:  cita.getTipoCita(),  
+                tipocita:  cita.getTipoCita(),  
                 anotaciones:  cita.getAnotaciones(),  
-                idCliente:  clienteCita.getId(),   
+                idcliente:  clienteCita.getId(),   
             }
             const respuesta= await this.citaRepository.update(cita.getNumeroCita(),citaDb)
             if(respuesta){
@@ -77,7 +80,7 @@ export default class CitaService implements CitaServicePort {
         try {
             const citaDb= await this.citaRepository.findById(numeroCita)
             if(citaDb){
-                if(citaDb.numeroCita){
+                if(citaDb.numerocita){
                     console.log(await CitaProvider.get(citaDb) + 'en serviceCita')
                     return await CitaProvider.get(citaDb)
                 }else{
@@ -109,14 +112,21 @@ export default class CitaService implements CitaServicePort {
     public async listaCitas(): Promise<Cita[]> {
         try {
             const citasData = await this.citaRepository.findAll();
+    
+            // Usa Promise.all para manejar las llamadas asíncronas de manera adecuada
+            const citas = await Promise.all(citasData.map(async (citaData) => {
+                return await CitaProvider.get(citaData);
+                console.log(await CitaProvider.get(citaData))
+            }));
 
-            const citas = citasData.map(citaData => CitaProvider.get(citaData));
-
-            return await Promise.all(citas);
+            console.log(citas)
+    
+            return await citas;
         } catch (error) {
             console.error("Error al buscar citas:", error);
             return [];
         }
     }
+    
 
 }

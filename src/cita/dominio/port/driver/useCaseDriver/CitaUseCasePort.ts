@@ -3,7 +3,7 @@ import Cliente from "../../../model/cliente/Cliente";
 
 export default interface CitaUseCasePort{
     
-    agendarCita: (cita: Cita)=>Promise<boolean>;
+    agendarCita: (cita: Cita, cliente: Cliente)=>Promise<boolean>;
     modificarCita: (cita: Cita)=> Promise<boolean>;
     eliminarCita: (numeroCita: string)=> Promise<boolean>;
     buscarCita: (numeroCita: string)=>  Promise<Cita>;

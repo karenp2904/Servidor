@@ -1,11 +1,11 @@
 export default interface CitaDatabaseAtributtes{
-    numeroCita: string,
+    numerocita: string,
     fecha: string,
     hora: string,
     lugar: string,
     descripcion: string,
     asistencia: string,
-    tipoCita: string,
+    tipocita: string,
     anotaciones: string,
-    idCliente: string,
+    idcliente: string,
 }

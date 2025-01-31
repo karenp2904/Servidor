@@ -98,7 +98,7 @@ export default class RepositoryCliente implements ClienteRepositoryPort {
             apellido: '',
             edad: 0,
             direccion: '',
-            tipoCliente: '',
+            tipocliente: '',
         } as ClienteDatabaseAttributes; 
     }
 }

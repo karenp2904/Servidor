@@ -8,16 +8,22 @@ export default class UsuarioControllerExpress implements UsuarioControllerExpres
     constructor(private readonly userUseCase: UsuarioUseCasePort ){}
 
 
-    public validarCredenciales(req: Request, res: Response): void {
+    public async validarCredenciales(req: Request, res: Response): Promise<void> {
         try {
             const { usuario, password } = req.body; 
-            const respuesta = this.userUseCase.validarCredenciales(usuario, password); 
-            res.status(200).json({ message: 'Credenciales validadas', data: respuesta });
+            const credencialesValidas = await this.userUseCase.validarCredenciales(usuario, password); 
+            console.log(credencialesValidas)
+            if (credencialesValidas) {
+                res.status(200).json({ message: 'Credenciales válidas', data: credencialesValidas });
+            } else {
+                res.status(401).json({ message: 'Credenciales inválidas' });
+            }
         } catch (error) {
             console.error('Error en validarCredenciales:', error);
-            res.status(500).json({ message: 'Error al validar credenciales', error: error });
+            res.status(500).json({ message: 'Error al validar credenciales' });
         }
     }
+    
 
 
 }

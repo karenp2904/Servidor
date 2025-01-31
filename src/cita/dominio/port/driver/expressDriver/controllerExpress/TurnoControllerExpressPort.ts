@@ -5,7 +5,7 @@ export default interface TurnoControllerExpressPort{
     obtenerTurno(req: Request, res: Response):void
     modificarCola(req: Request, res: Response):void
     finalizarTurno(req: Request, res: Response):void
-
+    obtenerTurnoId(req: Request, res: Response):void
 
 
 }

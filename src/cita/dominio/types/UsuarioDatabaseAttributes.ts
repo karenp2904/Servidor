@@ -1,6 +1,6 @@
 
 export default interface UsuarioDatabaseAtributtes{
-    idUsuario:number,
+    idusuario:number,
     usuario:string,
     contraseña:string,
     rol: string,

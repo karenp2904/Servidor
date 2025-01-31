@@ -11,16 +11,16 @@ export default class DatabaseControllerUsuario {
 
     public async validarUsuario(username: string, password: string): Promise<boolean> {
         try {
-            const query = 'SELECT * FROM users WHERE username = $1';
+            const query = 'SELECT * FROM usuario WHERE usuario = $1';
             const results = await this.dbController.query<UsuarioDatabaseAtributtes>(query, [username]);
 
             // Si no se encuentra el usuario, retornar falso
-            if (results.length === 0) {
+            if (results.rowCount === 0) {
                 console.log('Usuario no encontrado');
                 return false;
             }
 
-            const user = results[0];
+            const user = results.rows[0];
 
             if(password == user?.contraseña){
                 console.log('Inicio de sesión exitoso');
@@ -31,7 +31,7 @@ export default class DatabaseControllerUsuario {
             }
         } catch (error) {
             console.error('Error al validar usuario:', error);
-            throw error;
+            return false
         }
     }
 }

@@ -6,10 +6,10 @@ export default class ClienteControllerExpress implements ClienteControllerExpres
 
     constructor(private readonly clienteUseCase: ClienteUseCasePort){}
 
-    public obtenerCliente(req: Request, res: Response): void {
+    public async obtenerCliente(req: Request, res: Response): Promise<void> {
         try {
-            const numerCita= req.body
-            const respuesta = this.clienteUseCase.obtenerClientePorCita(numerCita); 
+            const {numerocita}= req.body
+            const respuesta = await this.clienteUseCase.obtenerClientePorCita(numerocita); 
             res.status(200).json({ message: 'Cliente', data: respuesta });
         } catch (error) {
             console.error('Error en obtenerCliente:', error);

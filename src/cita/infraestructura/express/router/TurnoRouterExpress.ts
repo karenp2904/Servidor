@@ -14,6 +14,8 @@ export default class TurnoRouterExpress extends RouterExpress implements TurnoRo
         this.obtenerTurnos()
         this.obtenerTurno()
         this.modificarCola()
+        this.obtenerTurnoId()
+        this.finalizarTurno()
     }
 
 
@@ -23,22 +25,31 @@ export default class TurnoRouterExpress extends RouterExpress implements TurnoRo
             this.turnoController.obtenerTurnos.bind(this.turnoController)
             )
     }
+
     obtenerTurno(): void {
-        this.router.get(
+        this.router.post(
             '/sistema/turno/obtener',
             this.turnoController.obtenerTurno.bind(this.turnoController)
             )
     }
 
+    obtenerTurnoId(): void {
+        this.router.post(
+            '/sistema/turno/obtenerId',
+            this.turnoController.obtenerTurnoId.bind(this.turnoController)
+            )
+    }
+
+
     modificarCola(): void {
-        this.router.get(
+        this.router.post(
             '/sistema/turno/modificar',
             this.turnoController.modificarCola.bind(this.turnoController)
             )    
     }
 
     finalizarTurno(): void {
-        this.router.get(
+        this.router.post(
             '/sistema/turno/finalizar',
             this.turnoController.finalizarTurno.bind(this.turnoController)
             )    

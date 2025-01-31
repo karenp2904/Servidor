@@ -8,6 +8,7 @@ export default interface ColaCitaUseCasePort{
     agregarTurno: (cita:Cita)=> Promise<Turno>;
     verificarPrioridad: (cliente:Cliente)=> Promise<boolean>; //true si es premium
     obtenerTurno:(numeroCita:string)=> Promise<Turno>;
+    obtenerTurnoId: (idTurno:string)=> Promise<Turno>;
 
 
 

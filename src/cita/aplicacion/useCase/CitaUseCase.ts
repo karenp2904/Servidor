@@ -4,6 +4,8 @@ import Cliente from "../../dominio/model/cliente/Cliente";
 import CitaServicePort from "../../dominio/port/driver/serviceDriver/CitaServicePort";
 import CitaUseCasePort from "../../dominio/port/driver/useCaseDriver/CitaUseCasePort";
 import ClienteUseCasePort from "../../dominio/port/driver/useCaseDriver/ClienteUseCasePort";
+import ChangeProvider from "../../infraestructura/repository/provider/ChangeType";
+
 
 export default class CitaUseCase implements CitaUseCasePort {
 
@@ -12,13 +14,21 @@ export default class CitaUseCase implements CitaUseCasePort {
         private readonly clienteUseCase: ClienteUseCasePort
     ) {}
 
-    public agendarCita = async (cita: Cita): Promise<boolean> => {
+    public agendarCita = async (cita: Cita, cliente: Cliente): Promise<boolean> => {
         try {
-            const agregarCliente= await this.clienteUseCase.agregarCliente(cita.getCliente())
+            const clienteAgregar=ChangeProvider.getInterfaceCliente(cliente)as Cliente;
+
+            const agregarCliente= await this.clienteUseCase.agregarCliente(clienteAgregar)
             console.log(agregarCliente)
-            const respuesta = await this.citaService.agendarCita(cita);
+            const citaAgendar= ChangeProvider.getInterfaceCita(cita)
+            const respuesta = await this.citaService.agendarCita(citaAgendar as Cita);
             console.log('agendarCitaUse:', respuesta);
-            return respuesta;
+            if(respuesta){
+                return true;
+
+            }else{
+                return false
+            }
         } catch (error) {
             console.error('Error en agendarCitaUse:', error);
             return false;
@@ -27,7 +37,12 @@ export default class CitaUseCase implements CitaUseCasePort {
 
     public modificarCita = async (cita: Cita): Promise<boolean> => {
         try {
-            const respuesta = await this.citaService.modificarCita(cita);
+            const citaType= ChangeProvider.getInterfaceCita(cita)
+            const clienteModificar=ChangeProvider.getInterfaceCliente(citaType.getCliente())as Cliente;
+
+            await this.clienteUseCase.modificarInformacionCliente(clienteModificar)
+
+            const respuesta = await this.citaService.modificarCita(citaType);
             console.log('modificarCitaUse:', respuesta);
             return respuesta;
         } catch (error) {
@@ -59,11 +74,15 @@ export default class CitaUseCase implements CitaUseCasePort {
 
     public buscarCitasPorCliente = async (cliente: Cliente): Promise<Cita[]> => {
         try {
-            const citas = await this.citaService.buscarCitasPorCliente(cliente.getId());
+            const clienteType= ChangeProvider.getInterfaceCliente(cliente)
+            const citas = await this.citaService.buscarCitasPorCliente(clienteType.getId());
             return citas; // Devuelve las citas encontradas
         } catch (error) {
             console.error('Error en buscarCitasPorCliente:', error);
             return []; // Devuelve un array vacío en caso de error
         }
     }
+
+
+
 }

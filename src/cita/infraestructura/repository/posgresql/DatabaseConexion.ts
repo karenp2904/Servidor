@@ -25,13 +25,18 @@ export default class DatabaseConexion {
         
     }
 
-    public async query<T extends QueryResultRow>(text: string, params: any[]): Promise<T[]> {
+    public async query<T extends QueryResultRow>(text: string, params: any[]): Promise<{ rows: T[], rowCount: number }> {
         try {
             const result = await this.pool.query<T>(text, params);
-            return result.rows;
+            
+            return {
+                rows: result.rows,
+                rowCount: result.rowCount || 0
+            };
         } catch (error) {
             console.error('Database query error:', error);
             throw error;
         }
     }
+    
 }

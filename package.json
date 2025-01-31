@@ -3,6 +3,8 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
+    "build": "rm -rf ./build && tsc",
+    "dev": "ts-node-dev --env-file=env/.env src/sistemaCita.ts",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
@@ -14,6 +16,7 @@
     "express": "^4.21.1",
     "jest": "^29.7.0",
     "morgan": "^1.10.0",
+    "node": "^22.11.0",
     "pg": "^8.13.1",
     "supertest": "^7.0.0"
   },
